@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>University Student Support Chatbot</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+            <h1>🎓 University Support</h1>
+            <p>AI-Powered Student Support Chatbot</p>
+        </div>
+
+        <div id="chat-box" class="chat-box">
+
+            <div class="message bot-message">
+                <span>
+                    Hello! 👋<br>
+                    I'm your University Support Assistant.<br>
+                    How can I help you today?
+                </span>
+            </div>
+
+        </div>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="user-input"
+                placeholder="Ask your question..."
+                autocomplete="off"
+            >
+
+            <button onclick="sendMessage()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const input = document.getElementById("user-input");
+
+        input.addEventListener("keypress", function(event) {
+
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+
+        });
+
+
+        async function sendMessage() {
+
+            const message = input.value.trim();
+
+            if (message === "") {
+                return;
+            }
+
+            addMessage(message, "user-message");
+
+            input.value = "";
+
+            try {
+
+                const response = await fetch("/chat", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        message: message
+                    })
+
+                });
+
+                const data = await response.json();
+
+                addMessage(data.response, "bot-message");
+
+            }
+
+            catch (error) {
+
+                addMessage(
+                    "Sorry, something went wrong. Please try again.",
+                    "bot-message"
+                );
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        function addMessage(message, className) {
+
+            const chatBox = document.getElementById("chat-box");
+
+            const messageDiv = document.createElement("div");
+
+            messageDiv.classList.add("message", className);
+
+            messageDiv.innerHTML = `<span>${message}</span>`;
+
+            chatBox.appendChild(messageDiv);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
