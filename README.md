@@ -1,70 +1,114 @@
-# AI-Powered Chatbot for University Student Support
+# UniAssist AI - ABES Student Support Chatbot
 
 ## Project Overview
 
-The AI-Powered Chatbot for University Student Support is a web-based chatbot designed to provide quick assistance to university students.
+UniAssist AI is a web-based chatbot that answers student questions about ABES Engineering College, Ghaziabad. It combines a Machine Learning intent classifier, TF-IDF retrieval over a verified knowledge base, and the Gemini API to write clear, grounded answers.
 
-The chatbot uses Natural Language Processing (NLP) and Machine Learning to understand student queries and identify their intent. Based on the identified intent, the system provides a relevant response.
+Built as part of the HCL Digital AI project.
 
 ## Features
 
-- Student-friendly chatbot interface
-- Natural Language Processing based query classification
-- Machine Learning based intent prediction
-- Attendance-related queries
-- Examination-related queries
-- Academic information
-- Library information
-- Fee-related queries
-- Placement-related queries
-- Admission-related queries
-- Course information
-- College timing information
-- University contact/support queries
-- Greeting and goodbye handling
+- Retrieval-augmented answers: the most relevant knowledge-base sections are retrieved and given to Gemini
+- Honest fallback: if the information is not in the knowledge base, the bot says so instead of guessing
+- Small-talk handling (greeting, thanks, goodbye)
+- Short chat memory for follow-up questions
+- Automatic backup model if the primary Gemini model fails
+- Light and dark theme with saved preference
+- Request logging to a local CSV file for testing
+
+## How It Works
+
+```text
+Student question
+      |
+      v
+Small-talk filter (regex)  ->  fixed reply
+      |
+      v
+ML intent classifier (TF-IDF + Logistic Regression)  ->  small-talk fallback and intent logging
+      |
+      v
+TF-IDF retrieval over knowledge-base sections
+      |
+      v
+Gemini (primary model, then backup model) with retrieved context and chat memory
+      |
+      v
+Answer, or safe fallback message
+```
 
 ## Technologies Used
 
-- Python
-- Flask
-- Scikit-learn
-- Pandas
-- NumPy
-- Joblib
-- HTML
-- CSS
-- JavaScript
+- Python, Flask
+- Scikit-learn, Pandas, NumPy, Joblib
+- Google Gemini API (google-genai)
+- HTML, CSS, JavaScript
 
 ## Machine Learning Approach
 
-The chatbot uses the following NLP and Machine Learning techniques:
-
 1. Text preprocessing
-2. TF-IDF Vectorization
-3. Logistic Regression
-4. Intent Classification
+2. TF-IDF vectorization
+3. Logistic Regression for intent classification, trained on a public customer-service intent dataset (Bitext, from Kaggle)
 
-The user query is converted into numerical features using TF-IDF. The trained Logistic Regression model then predicts the intent of the query. Based on the predicted intent, the chatbot returns an appropriate response.
+The classifier is used as a lightweight first filter and for intent logging. Factual answers about ABES come from the knowledge base through retrieval and Gemini, not from the classifier.
 
 ## Project Structure
 
 ```text
 AI-UNIVERSITY CHATBOT
 │
-├── app.py
-├── train_model.py
-├── check_dataset.py
-├── view_data.py
+├── app.py                    Flask app, retrieval, Gemini calls
+├── train_model.py            Trains the intent classifier
+├── check_dataset.py          Dataset inspection
+├── view_data.py              Dataset viewing
 ├── university_chatbot_model.pkl
 ├── requirements.txt
 │
-├── data
-│   └── Bitext_Sample_Customer_Service_Training_Dataset.csv
-│
-├── templates
-│   └── index.html
-│
-├── static
-│   └── style.css
-│
-└── venv
+├── data/                     Training dataset
+├── knowledge_base/
+│   └── abes_info.txt         ABES information used for retrieval
+├── templates/
+│   └── index.html            Chat interface
+└── static/
+    └── style.css             Styling and themes
+```
+
+## Setup
+
+1. Clone the repository and open the folder.
+2. Create and activate a virtual environment:
+   ```
+   python -m venv venv
+   venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+4. Create a `.env` file in the project root:
+   ```
+   GEMINI_API_KEY=your_key_here
+   FLASK_SECRET_KEY=any_random_string
+   ```
+5. Run the app:
+   ```
+   python app.py
+   ```
+6. Open http://127.0.0.1:5000
+
+## Knowledge Base
+
+`knowledge_base/abes_info.txt` contains public information from the official ABES website. Each section starts with an ALL-CAPS heading. The chatbot is instructed not to invent fees, timings, dates, rules or contact details.
+
+## Limitations
+
+- Attendance rules, examination rules and library timings are not yet in the knowledge base
+- The bot cannot access private student data such as marks or attendance records
+- The knowledge base is a snapshot; students should verify important details on the official ABES website
+
+## Future Work
+
+- Add attendance, examination and library details from official ABES documents
+- Embedding-based semantic retrieval
+- Admin page to update the knowledge base
+- Cloud deployment
