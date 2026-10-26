@@ -1,0 +1,121 @@
+ABES ENGINEERING COLLEGE - KNOWLEDGE BASE
+
+ABOUT ABES
+
+ABES Engineering College is located in Ghaziabad, Uttar Pradesh.
+The official ABES website states that the institution was established in 2000.
+The college campus is located at 19th KM Stone, NH-09, Ghaziabad, Uttar Pradesh, PIN 201009.
+
+ABES states that it has been an autonomous college since 2025.
+
+Official contact information:
+Phone: 01207135112
+Email: info@abes.ac.in
+
+COURSES AND PROGRAMS
+
+ABES offers programs including B.Tech, M.Tech, MCA, MBA and BCA.
+
+B.Tech branches listed by ABES include:
+- Computer Science and Engineering
+- Computer Science and Engineering with Artificial Intelligence and Machine Learning
+- Computer Science and Engineering with Data Science
+- Electronics and Communication Engineering
+- Electrical and Computer Engineering
+- Mechanical Engineering
+
+CSE INFORMATION
+
+The Computer Science and Engineering department was established in 2000.
+
+The B.Tech Computer Science and Engineering program is a four-year full-time program.
+
+The department provides laboratories, project facilities, advanced labs and Centers of Excellence.
+
+The department also conducts training, workshops, guest lectures, alumni lectures and project-based activities.
+
+ACADEMICS AND TRAINING
+
+ABES provides technical and soft-skills training for students.
+
+Training programs are intended to improve technical skills, problem-solving ability, industry readiness and employability.
+
+Training areas mentioned on the official website include Full Stack Development, DSA, DBMS, Data Science and company-readiness programs.
+
+LIBRARY
+
+The ABES library is described as a resource center supporting academic learning and research.
+
+The official website states that the library has a large collection of books, e-journals and e-books and provides reading facilities.
+
+The library is automated and uses the KOHA library management system.
+
+FACILITIES
+
+ABES provides facilities including:
+
+- Classrooms
+- Laboratories
+- Auditorium
+- Seminar halls
+- Library
+- Sports facilities
+- Medical facilities
+- Canteens
+- Hostels
+- Gym
+- Swimming pool
+- Stadium
+- Courts for sports activities
+
+HOSTELS
+
+ABES provides hostel facilities for students.
+
+The official website describes boys' and girls' hostels with different room-sharing options.
+
+Hostel facilities include mess/canteen services, laundry and recreational/sports facilities.
+
+STUDENT LIFE
+
+ABES has student clubs and activities covering areas such as:
+
+- Cultural activities
+- Sports
+- Literature
+- Debate
+- Photography
+- Environment
+- Social activities
+- NSS
+- Publication and magazine
+- Tourism
+- Creative activities
+- Mental well-being
+- Yoga and meditation
+
+PLACEMENTS
+
+ABES provides training and placement-related activities for students.
+
+The official website publishes placement statistics and recruiter information.
+
+Placement information can change by academic year, so the chatbot should avoid giving old placement numbers as current information unless the source year is explicitly mentioned.
+
+ADMISSIONS
+
+ABES provides admission-related information through its official admission portal.
+
+Admission requirements, fee structures, dates and counselling information can change by academic session.
+
+For current admission information, students should be directed to the official ABES admission portal.
+
+IMPORTANT RULE FOR CHATBOT
+
+The chatbot should answer using information available in this knowledge base.
+
+If the requested information is not available in the knowledge base, the chatbot should clearly say that it does not have enough information instead of inventing an answer.
+
+For current or time-sensitive information such as fees, admission dates, examination schedules, placement statistics or notices, the chatbot should mention that students should verify the latest information from the official ABES website or relevant college portal.
+
+The chatbot should not invent college policies, fees, timings, contact details, placement figures or academic rules.

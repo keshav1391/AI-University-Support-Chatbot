@@ -5,7 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>University Student Support Chatbot</title>
+    <title>UniAssist AI • ABES</title>
+
+    <!-- Apply saved theme before the page paints (prevents a white flash) -->
+    <script>
+        (function () {
+
+            var theme = null;
+
+            try {
+                theme = localStorage.getItem("theme");
+            } catch (e) {}
+
+            if (theme !== "dark" && theme !== "light") {
+                theme = window.matchMedia &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches
+                    ? "dark"
+                    : "light";
+            }
+
+            document.documentElement.setAttribute("data-theme", theme);
+
+        })();
+    </script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -14,45 +36,155 @@
 
     <div class="chat-container">
 
+        <!-- HEADER -->
         <div class="chat-header">
-            <h1>🎓 University Support</h1>
-            <p>AI-Powered Student Support Chatbot</p>
-        </div>
 
-        <div id="chat-box" class="chat-box">
+            <div class="brand">
+                <div class="logo">🎓</div>
 
-            <div class="message bot-message">
-                <span>
-                    Hello! 👋<br>
-                    I'm your University Support Assistant.<br>
-                    How can I help you today?
-                </span>
+                <div>
+                    <h1>UniAssist AI</h1>
+
+                    <div class="status">
+                        <span class="status-dot"></span>
+                        Online • ABES Student Support
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+
+                <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Switch theme">
+                    🌙
+                </button>
+
+                <button class="clear-btn" onclick="clearChat()" title="New chat">
+                    ↻
+                </button>
+
             </div>
 
         </div>
 
+
+        <!-- CHAT AREA -->
+        <div id="chat-box" class="chat-box"></div>
+
+
+        <!-- QUICK QUESTIONS -->
+        <div class="quick-section">
+
+            <p>Quick questions</p>
+
+            <div class="quick-buttons">
+
+                <button onclick="quickMessage('Which B.Tech branches does ABES offer?')">
+                    🎓 Courses
+                </button>
+
+                <button onclick="quickMessage('Tell me about hostel facilities at ABES')">
+                    🏠 Hostel
+                </button>
+
+                <button onclick="quickMessage('Tell me about the ABES library')">
+                    📚 Library
+                </button>
+
+                <button onclick="quickMessage('Tell me about placements at ABES')">
+                    💼 Placement
+                </button>
+
+                <button onclick="quickMessage('What facilities does ABES provide?')">
+                    🏫 Facilities
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- INPUT AREA -->
         <div class="input-area">
 
             <input
                 type="text"
                 id="user-input"
-                placeholder="Ask your question..."
+                placeholder="Ask about courses, hostel, library, placements..."
                 autocomplete="off"
+                maxlength="500"
             >
 
-            <button onclick="sendMessage()">
-                Send
+            <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                ➤
             </button>
 
         </div>
 
+        <div class="footer-text">
+            AI-powered student support • Always verify important details on the official ABES website
+        </div>
+
     </div>
+
 
     <script>
 
         const input = document.getElementById("user-input");
+        const sendBtn = document.getElementById("send-btn");
+        const chatBox = document.getElementById("chat-box");
+        const themeBtn = document.getElementById("theme-btn");
 
-        input.addEventListener("keypress", function(event) {
+        const WELCOME =
+            "Hello! 👋\n\nI'm UniAssist AI, your ABES student support assistant.\n\nAsk me about courses, hostels, library, facilities, placements and admissions.";
+
+        let isSending = false;
+
+
+        // ===== THEME =====
+
+        function currentTheme() {
+
+            return document.documentElement.getAttribute("data-theme") === "dark"
+                ? "dark"
+                : "light";
+
+        }
+
+
+        function updateThemeButton() {
+
+            // Shows the theme you will switch TO
+            if (currentTheme() === "dark") {
+                themeBtn.textContent = "☀️";
+                themeBtn.title = "Switch to light theme";
+            } else {
+                themeBtn.textContent = "🌙";
+                themeBtn.title = "Switch to dark theme";
+            }
+
+        }
+
+
+        function toggleTheme() {
+
+            const next = currentTheme() === "dark" ? "light" : "dark";
+
+            document.documentElement.setAttribute("data-theme", next);
+
+            try {
+                localStorage.setItem("theme", next);
+            } catch (e) {}
+
+            updateThemeButton();
+
+        }
+
+
+        updateThemeButton();
+
+
+        // ENTER KEY
+        input.addEventListener("keypress", function (event) {
 
             if (event.key === "Enter") {
                 sendMessage();
@@ -61,17 +193,164 @@
         });
 
 
+        // RENDER TEXT INTO A BUBBLE (safe: no innerHTML with user/AI text)
+        function renderBubble(bubble, text) {
+
+            bubble.innerHTML = "";
+
+            let list = null;
+
+            text.replace(/\*\*/g, "").split("\n").forEach(function (line) {
+
+                const t = line.trim();
+
+                if (t === "") {
+                    list = null;
+                    return;
+                }
+
+                const isBullet = /^(- |\* |• )/.test(t);
+
+                if (isBullet) {
+
+                    if (!list) {
+                        list = document.createElement("ul");
+                        bubble.appendChild(list);
+                    }
+
+                    const li = document.createElement("li");
+                    li.textContent = t.replace(/^(- |\* |• )/, "");
+                    list.appendChild(li);
+
+                } else {
+
+                    list = null;
+
+                    const p = document.createElement("p");
+                    p.textContent = t;
+                    bubble.appendChild(p);
+
+                }
+
+            });
+
+        }
+
+
+        // ADD MESSAGE
+        function addMessage(message, className) {
+
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", className);
+
+            const avatar = document.createElement("div");
+            const content = document.createElement("div");
+            content.classList.add("message-content");
+
+            const bubble = document.createElement("div");
+            bubble.classList.add("bubble");
+
+            if (className === "user-message") {
+
+                avatar.classList.add("avatar", "user-avatar");
+                avatar.textContent = "👤";
+
+                bubble.textContent = message;
+                content.appendChild(bubble);
+
+                messageDiv.appendChild(content);
+                messageDiv.appendChild(avatar);
+
+            } else {
+
+                avatar.classList.add("avatar", "bot-avatar");
+                avatar.textContent = "🤖";
+
+                const name = document.createElement("div");
+                name.classList.add("sender-name");
+                name.textContent = "UniAssist AI";
+
+                renderBubble(bubble, message);
+
+                content.appendChild(name);
+                content.appendChild(bubble);
+
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+
+            }
+
+            chatBox.appendChild(messageDiv);
+            scrollToBottom();
+
+        }
+
+
+        // TYPING INDICATOR
+        function showTyping() {
+
+            const typing = document.createElement("div");
+
+            typing.classList.add("message", "bot-message");
+            typing.id = "typing";
+
+            typing.innerHTML = `
+                <div class="avatar bot-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="sender-name">UniAssist AI</div>
+                    <div class="bubble typing-bubble">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+
+            chatBox.appendChild(typing);
+            scrollToBottom();
+
+        }
+
+
+        function hideTyping() {
+
+            const typingElement = document.getElementById("typing");
+
+            if (typingElement) {
+                typingElement.remove();
+            }
+
+        }
+
+
+        function setSending(state) {
+
+            isSending = state;
+            input.disabled = state;
+            sendBtn.disabled = state;
+
+            if (!state) {
+                input.focus();
+            }
+
+        }
+
+
+        // SEND MESSAGE
         async function sendMessage() {
 
             const message = input.value.trim();
 
-            if (message === "") {
+            if (message === "" || isSending) {
                 return;
             }
 
             addMessage(message, "user-message");
 
             input.value = "";
+
+            setSending(true);
+            showTyping();
 
             try {
 
@@ -89,13 +368,19 @@
 
                 });
 
+                if (!response.ok) {
+                    throw new Error("Server error " + response.status);
+                }
+
                 const data = await response.json();
+
+                hideTyping();
 
                 addMessage(data.response, "bot-message");
 
-            }
+            } catch (error) {
 
-            catch (error) {
+                hideTyping();
 
                 addMessage(
                     "Sorry, something went wrong. Please try again.",
@@ -104,26 +389,54 @@
 
                 console.error(error);
 
+            } finally {
+
+                setSending(false);
+
             }
 
         }
 
 
-        function addMessage(message, className) {
+        // QUICK QUESTIONS
+        function quickMessage(message) {
 
-            const chatBox = document.getElementById("chat-box");
+            if (isSending) {
+                return;
+            }
 
-            const messageDiv = document.createElement("div");
+            input.value = message;
+            sendMessage();
 
-            messageDiv.classList.add("message", className);
+        }
 
-            messageDiv.innerHTML = `<span>${message}</span>`;
 
-            chatBox.appendChild(messageDiv);
+        // NEW CHAT (also clears server-side memory)
+        async function clearChat() {
+
+            try {
+                await fetch("/reset", { method: "POST" });
+            } catch (error) {
+                console.error(error);
+            }
+
+            chatBox.innerHTML = "";
+
+            addMessage(WELCOME, "bot-message");
+
+        }
+
+
+        // SCROLL
+        function scrollToBottom() {
 
             chatBox.scrollTop = chatBox.scrollHeight;
 
         }
+
+
+        // INITIAL WELCOME MESSAGE
+        addMessage(WELCOME, "bot-message");
 
     </script>
 
